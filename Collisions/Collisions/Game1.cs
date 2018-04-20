@@ -189,12 +189,7 @@ namespace Collisions
             // Draw the sprite
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            //Vector2 location = new Vector2(400, 500);
-            //Rectangle sourceRectangle = new Rectangle(0, 0, texture1.Width, texture1.Height);
-            //Vector2 origin = new Vector2(texture1.Width/2, texture1.Height/2);
-            //Vector2 pos = new Vector2(spritePosition1.X+ texture1.Width / 2,
-                                        //spritePosition1.Y + texture1.Height / 2);
-            //spriteBatch.Draw(texture1, pos, sourceRectangle, Color.White, spriteAngle1, origin, 1.0f, SpriteEffects.None, 1);
+
             spriteBatch.Draw(texture1, spritePosition1, Color.White);
             spriteBatch.End();
 
