@@ -64,7 +64,7 @@ namespace Collisions
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            texture1 = Content.Load<Texture2D>("peter");
+            texture1 = Content.Load<Texture2D>("cactus");
 
             soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
             soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
