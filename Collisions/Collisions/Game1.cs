@@ -19,8 +19,12 @@ namespace Collisions
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Texture2D texture1;
-        Vector2 spritePosition1;
+        Texture2D obstacle1;
+        Texture2D character;
+
+        Vector2 characterpos;
+        Vector2 obstaclepos1;
+
         Vector2 spriteSpeed1 = new Vector2(0.0f, 0.0f);
         Vector2 spriteSpeed2 = new Vector2(100.0f, 100.0f);
         float spriteAngle1 = 0;
@@ -64,7 +68,9 @@ namespace Collisions
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            texture1 = Content.Load<Texture2D>("cactus");
+            obstacle1 = Content.Load<Texture2D>("cactus");
+            obstacle1 = Content.Load<Texture2D>("Minion");
+
 
             soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
             soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
@@ -73,13 +79,13 @@ namespace Collisions
             mario.IsLooped = true;
             mario.Play();
 
-            spritePosition1.X = 100;
-            spritePosition1.Y = 500;
+            characterpos.X = 100;
+            characterpos.Y = 500;
 
 
 
-            sprite1Height = texture1.Bounds.Height;
-            sprite1Width = texture1.Bounds.Width;
+            sprite1Height = obstacle1.Bounds.Height;
+            sprite1Width = obstacle1.Bounds.Width;
 
         }
 
@@ -106,7 +112,7 @@ namespace Collisions
 
             // Move the sprite around
 
-            UpdateSprite(gameTime, ref spritePosition1, ref spriteSpeed1);
+            UpdateSprite(gameTime, ref obstaclepos1, ref spriteSpeed1);
             CheckForCollision();
             if(chimes.State != SoundState.Playing && mario.State == SoundState.Paused)
             {
@@ -122,9 +128,9 @@ namespace Collisions
 
             spritePosition += spriteSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             spriteAngle1 += 0.01f;
-            int MaxX = graphics.GraphicsDevice.Viewport.Width - texture1.Width;
+            int MaxX = graphics.GraphicsDevice.Viewport.Width - obstacle1.Width;
             int MinX = 0;
-            int MaxY = graphics.GraphicsDevice.Viewport.Height - texture1.Height;
+            int MaxY = graphics.GraphicsDevice.Viewport.Height - obstacle1.Height;
             int MinY = 0;
 
             // Check for bounce 
@@ -162,7 +168,7 @@ namespace Collisions
         {/*
             
 
-            BoundingBox bb1 = new BoundingBox(new Vector3(spritePosition1.X - (sprite1Width / 2), spritePosition1.Y - (sprite1Height / 2), 0), new Vector3(spritePosition1.X + (sprite1Width / 2), spritePosition1.Y + (sprite1Height / 2), 0));
+            BoundingBox bb1 = new BoundingBox(new Vector3(obstaclepos1.X - (sprite1Width / 2), obstaclepos1.Y - (sprite1Height / 2), 0), new Vector3(obstaclepos1.X + (sprite1Width / 2), obstaclepos1.Y + (sprite1Height / 2), 0));
 
             BoundingBox bb2 = new BoundingBox(new Vector3(spritePosition2.X - (sprite2Width / 2), spritePosition2.Y - (sprite2Height / 2), 0), new Vector3(spritePosition2.X + (sprite2Width / 2), spritePosition2.Y + (sprite2Height / 2), 0));
 
@@ -190,12 +196,12 @@ namespace Collisions
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
             //Vector2 location = new Vector2(400, 500);
-            //Rectangle sourceRectangle = new Rectangle(0, 0, texture1.Width, texture1.Height);
-            //Vector2 origin = new Vector2(texture1.Width/2, texture1.Height/2);
-            //Vector2 pos = new Vector2(spritePosition1.X+ texture1.Width / 2,
-                                        //spritePosition1.Y + texture1.Height / 2);
-            //spriteBatch.Draw(texture1, pos, sourceRectangle, Color.White, spriteAngle1, origin, 1.0f, SpriteEffects.None, 1);
-            spriteBatch.Draw(texture1, spritePosition1, Color.White);
+            //Rectangle sourceRectangle = new Rectangle(0, 0, obstacle1.Width, obstacle1.Height);
+            //Vector2 origin = new Vector2(obstacle1.Width/2, obstacle1.Height/2);
+            //Vector2 pos = new Vector2(obstaclepos1.X+ obstacle1.Width / 2,
+                                        //obstaclepos1.Y + obstacle1.Height / 2);
+            //spriteBatch.Draw(obstacle1, pos, sourceRectangle, Color.White, spriteAngle1, origin, 1.0f, SpriteEffects.None, 1);
+            spriteBatch.Draw(obstacle1, obstaclepos1, Color.White);
             spriteBatch.End();
 
 
