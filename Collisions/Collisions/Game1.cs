@@ -56,7 +56,6 @@ namespace Collisions
 
         Vector2 minionSpeed = new Vector2(0.0f, 0.0f);
         Vector2 objSpeed = new Vector2(0, 0);
-        float spriteAngle1 = 0;
 
         int minionHeight;
         int minionWidth;
@@ -78,6 +77,7 @@ namespace Collisions
         double timeStart;
 
         int cleared = 0;
+        bool gameOver;
 
         List<Obstacle> obstacles = new List<Obstacle>();
         public Game1()
@@ -92,6 +92,7 @@ namespace Collisions
             minionStartPos_Y = 500;
             timeAlive = 0;
             timeStart = 0;
+            gameOver = false;
         }
 
         /// <summary>
@@ -135,8 +136,8 @@ namespace Collisions
             backgroundPos.X = 0;
             backgroundPos.Y = 0;
 
-            startPos.Y = 360;
-            startPos.X = 540;
+            startPos.Y = 100;
+            startPos.X = 540 - start.Width/2;
 
 
 
@@ -182,7 +183,8 @@ namespace Collisions
                     timeStart = gameTime.ElapsedGameTime.TotalSeconds;
                     timeAlive = 0;
                     obstacles.Add(CreateNew());
-
+                    gameOver = false;
+                    cleared = 0;
 
                 }
                 else
@@ -200,7 +202,7 @@ namespace Collisions
             if(!is_jumping)
             {
 
-                if (keystate.IsKeyDown(Keys.Space))
+                if (keystate.IsKeyDown(Keys.Space) && active)
                     do_jump(15f);
 
 
@@ -249,6 +251,7 @@ namespace Collisions
                 {
                     // Delete?
                     cleared++;
+                    objSpeed.X -= 10;
                 }
             }
             if (create_new)
@@ -358,6 +361,7 @@ namespace Collisions
                     //mario.Pause();
                     //chimes.Play();
                     Reset();
+                    gameOver = true;
 
                 }
             }
@@ -403,15 +407,34 @@ namespace Collisions
                 spriteBatch.Draw(start, startPos, Color.White);
                 spriteBatch.End();
             }
+           
 
-                SpriteFont font;
-                font = Content.Load < SpriteFont>("Time");
+            SpriteFont font;
+            font = Content.Load < SpriteFont>("Time");
+            if (gameOver)
+            {
                 spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-                spriteBatch.DrawString(font, timeAlive.ToString("0.##"), new Vector2(1000, 50), Color.Black);
+                spriteBatch.DrawString(font, "GAME OVER", new Vector2(500, 50), Color.Black);
+                spriteBatch.DrawString(font, "TIME:", new Vector2(420, 75), Color.Black);
+                spriteBatch.DrawString(font, timeAlive.ToString("0.##"), new Vector2(490, 75), Color.Black);
+                spriteBatch.DrawString(font, "SCORE:", new Vector2(560, 75), Color.Black);
+                spriteBatch.DrawString(font, cleared.ToString(), new Vector2(640, 75), Color.Black);
                 spriteBatch.End();
+            }
+            else
+            {
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+                spriteBatch.DrawString(font, "TIME:", new Vector2(950, 50), Color.Black);
+                spriteBatch.DrawString(font, timeAlive.ToString("0.##"), new Vector2(1010, 50), Color.Black);
+                spriteBatch.DrawString(font, "SCORE:", new Vector2(950, 75), Color.Black);
+                spriteBatch.DrawString(font, cleared.ToString(), new Vector2(1020, 75), Color.Black);
+                spriteBatch.End();
+            }
             
 
-     
+            
+
+
             base.Draw(gameTime);
         }
 
@@ -422,6 +445,7 @@ namespace Collisions
             active = false;
             minionPos.X = minionStartPos_X;
             minionPos.Y = minionStartPos_Y;
+            
             
         }
     }
