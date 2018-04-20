@@ -19,32 +19,49 @@ namespace Collisions
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Texture2D obstacle1;
-        Texture2D character;
+        Texture2D tree;
+        Texture2D minion;
+        Texture2D background;
+        Texture2D start;
 
-        Vector2 characterpos;
-        Vector2 obstaclepos1;
+        Vector2 minionPos;
+        Vector2 treepos;
+        Vector2 backgroundPos;
+        Vector2 startPos;
 
-        Vector2 spriteSpeed1 = new Vector2(0.0f, 0.0f);
-        Vector2 spriteSpeed2 = new Vector2(100.0f, 100.0f);
+        Vector2 minionSpeed = new Vector2(0.0f, 0.0f);
+        Vector2 treeSpeed = new Vector2(0, 0);
         float spriteAngle1 = 0;
 
-        int sprite1Height;
-        int sprite1Width;
+        int minionHeight;
+        int minionWidth;
 
-
+        KeyboardState keystate;
+        KeyboardState prevkeystate;
         SoundEffect soundEffect;
         SoundEffect soundEffect2;
         SoundEffectInstance chimes;
         SoundEffectInstance mario;
-        
 
+        int minionStartPos_X, minionStartPos_Y;
+
+        bool is_jumping;
+        bool active;
+
+        double timeAlive;
+        double timeStart;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 800;
-            graphics.PreferredBackBufferWidth = 1500;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1080;
+            is_jumping = false;
+            active = false;
+            minionStartPos_X = 100;
+            minionStartPos_Y = 500;
+            timeAlive = 0;
+            timeStart = 0;
         }
 
         /// <summary>
@@ -70,9 +87,11 @@ namespace Collisions
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            obstacle1 = Content.Load<Texture2D>("minion");
-            
-            //obstacle1 = Content.Load<Texture2D>("tree");
+            minion = Content.Load<Texture2D>("minion");
+            background = Content.Load<Texture2D>("road");
+
+            tree = Content.Load<Texture2D>("tree");
+            start = Content.Load<Texture2D>("start");
 
 
             soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
@@ -82,13 +101,21 @@ namespace Collisions
             mario.IsLooped = true;
             mario.Play();
 
-            characterpos.X = 100;
-            characterpos.Y = 500;
+            minionPos.X = 100;
+            minionPos.Y = 500;
+            backgroundPos.X = 0;
+            backgroundPos.Y = 0;
+
+            startPos.Y = 360;
+            startPos.X = 540;
+
+            treepos.X = 1080;
+            treepos.Y = 500 - (tree.Height - minion.Height);
 
 
 
-            sprite1Height = obstacle1.Bounds.Height;
-            sprite1Width = obstacle1.Bounds.Width;
+            minionHeight = minion.Bounds.Height;
+            minionWidth = minion.Bounds.Width;
 
         }
 
@@ -109,22 +136,71 @@ namespace Collisions
         protected override void Update(GameTime gameTime)
         {
             // Allow the game to exit
-            /*
+
+            keystate = Keyboard.GetState();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
             // Move the sprite around
 
-            UpdateSprite(gameTime, ref obstaclepos1, ref spriteSpeed1);
-            CheckForCollision();
-            if(chimes.State != SoundState.Playing && mario.State == SoundState.Paused)
+            //UpdateSprite(gameTime, ref obstaclepos1, ref spriteSpeed1);
+            //CheckForCollision();
+
+            if(!active)
+            {
+                if(keystate.IsKeyDown(Keys.S))
+                {
+                    active = true;
+                    treeSpeed = new Vector2(-300f, 0);
+                    timeStart = gameTime.ElapsedGameTime.TotalSeconds;
+                    timeAlive = 0;
+
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            timeAlive += gameTime.ElapsedGameTime.TotalSeconds;
+            if (chimes.State != SoundState.Playing && mario.State == SoundState.Paused)
             {
                 mario.Play();
             }
-            */
+
+            if(!is_jumping)
+            {
+
+                if (keystate.IsKeyDown(Keys.Space))
+                    do_jump(15f);
+
+
+            }
+            else
+            {
+                minionSpeed.Y += 0.5f;
+                minionPos += minionSpeed;
+                if (minionPos.Y >= 500)
+                {
+                    is_jumping = false;
+                }
+                
+            }
+            treepos += treeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            prevkeystate = keystate;
+            CheckForCollision();
             base.Update(gameTime);
         }
 
+
+        private void do_jump(float speed)
+        {
+            is_jumping = true;
+
+            minionSpeed = new Vector2(0.0f, -speed);
+
+        }
         void UpdateSprite(GameTime gameTime, ref Vector2 spritePosition, ref Vector2 spriteSpeed)
         {
 
@@ -132,9 +208,9 @@ namespace Collisions
 
             spritePosition += spriteSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             spriteAngle1 += 0.01f;
-            int MaxX = graphics.GraphicsDevice.Viewport.Width - obstacle1.Width;
+            int MaxX = graphics.GraphicsDevice.Viewport.Width - tree.Width;
             int MinX = 0;
-            int MaxY = graphics.GraphicsDevice.Viewport.Height - obstacle1.Height;
+            int MaxY = graphics.GraphicsDevice.Viewport.Height - tree.Height;
             int MinY = 0;
 
             // Check for bounce 
@@ -169,21 +245,23 @@ namespace Collisions
         }
 
         void CheckForCollision()
-        {/*
-            
+        {
 
-            BoundingBox bb1 = new BoundingBox(new Vector3(obstaclepos1.X - (sprite1Width / 2), obstaclepos1.Y - (sprite1Height / 2), 0), new Vector3(obstaclepos1.X + (sprite1Width / 2), obstaclepos1.Y + (sprite1Height / 2), 0));
+            int offset = 10;
+            BoundingBox bb1 = new BoundingBox(new Vector3(treepos.X - (tree.Width / 2-offset), treepos.Y - (tree.Height / 2 - offset), 0), new Vector3(treepos.X + (tree.Width / 2 - offset), 
+                treepos.Y + (tree.Height / 2 - offset), 0));
 
-            BoundingBox bb2 = new BoundingBox(new Vector3(spritePosition2.X - (sprite2Width / 2), spritePosition2.Y - (sprite2Height / 2), 0), new Vector3(spritePosition2.X + (sprite2Width / 2), spritePosition2.Y + (sprite2Height / 2), 0));
+            BoundingBox bb2 = new BoundingBox(new Vector3(minionPos.X - (minionWidth / 2), minionPos.Y - (minionHeight / 2), 0), new Vector3(minionPos.X + (minionWidth / 2), minionPos.Y + (minionHeight / 2), 0));
 
             if (bb1.Intersects(bb2))
             {
 
                 mario.Pause();
                 chimes.Play();
+                Reset();
 
             }
-            */
+            
      
         }
 
@@ -197,15 +275,44 @@ namespace Collisions
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // Draw the sprite
-
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(obstacle1, obstaclepos1, Color.White);
+            spriteBatch.Draw(background, backgroundPos, Color.White);
             spriteBatch.End();
 
 
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Draw(tree, treepos, Color.White);
+            spriteBatch.Draw(minion, minionPos, Color.White);
+            spriteBatch.End();
+            
+            if (!active)
+            {
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+                spriteBatch.Draw(start, startPos, Color.White);
+                spriteBatch.End();
+            }
+
+                SpriteFont font;
+                font = Content.Load < SpriteFont>("Time");
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+                spriteBatch.DrawString(font, timeAlive.ToString("0.##"), new Vector2(1000, 50), Color.Black);
+                spriteBatch.End();
+            
+
      
             base.Draw(gameTime);
+        }
+
+        private void Reset()
+        {
+            treeSpeed = new Vector2(0, 0);
+            treepos.X = 1080;
+            treepos.Y = 500 - (tree.Height - minion.Height);
+            active = false;
+            minionPos.X = minionStartPos_X;
+            minionPos.Y = minionStartPos_Y;
+            
         }
     }
 }
