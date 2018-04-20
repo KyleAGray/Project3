@@ -42,27 +42,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Minion.png">
-      <Name>Minion</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="road.jpg">
       <Name>road</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="cactus.png">
-      <Name>cactus</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="tree.png">
-      <Name>tree</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -86,6 +67,33 @@
       <Name>21090574_cartoon-game-over_by_eskoma_preview</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="barrel.png">
+      <Name>barrel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Bomb.png">
+      <Name>Bomb</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Cactus.png">
+      <Name>Cactus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Minion.png">
+      <Name>Minion</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="tree.png">
+      <Name>tree</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

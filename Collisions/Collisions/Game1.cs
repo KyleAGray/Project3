@@ -11,6 +11,18 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Collisions
 {
+    public class Obstacle
+    {
+        Texture2D image;
+        Vector2 Position;
+        public Obstacle(Texture2D texture)
+        {
+            image = texture;
+            Position.X = 1080;
+            Position.Y = 500;
+        }
+    }
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -94,12 +106,12 @@ namespace Collisions
             start = Content.Load<Texture2D>("start");
 
 
-            soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
-            soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
-            chimes = soundEffect.CreateInstance();
-            mario = soundEffect2.CreateInstance();
-            mario.IsLooped = true;
-            mario.Play();
+            //soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
+            //soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
+            //chimes = soundEffect.CreateInstance();
+            //mario = soundEffect2.CreateInstance();
+            //mario.IsLooped = true;
+            //mario.Play();
 
             minionPos.X = 100;
             minionPos.Y = 500;
@@ -164,10 +176,10 @@ namespace Collisions
             }
 
             timeAlive += gameTime.ElapsedGameTime.TotalSeconds;
-            if (chimes.State != SoundState.Playing && mario.State == SoundState.Paused)
+            /*(if (chimes.State != SoundState.Playing && mario.State == SoundState.Paused)
             {
                 mario.Play();
-            }
+            }*/
 
             if(!is_jumping)
             {
@@ -190,10 +202,14 @@ namespace Collisions
             treepos += treeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             prevkeystate = keystate;
             CheckForCollision();
+            CheckObstacle();
             base.Update(gameTime);
         }
 
+        private void CheckObstacle()
+        {
 
+        }
         private void do_jump(float speed)
         {
             is_jumping = true;
@@ -247,7 +263,7 @@ namespace Collisions
         void CheckForCollision()
         {
 
-            int offset = 10;
+            int offset = 30;
             BoundingBox bb1 = new BoundingBox(new Vector3(treepos.X - (tree.Width / 2-offset), treepos.Y - (tree.Height / 2 - offset), 0), new Vector3(treepos.X + (tree.Width / 2 - offset), 
                 treepos.Y + (tree.Height / 2 - offset), 0));
 
@@ -256,8 +272,8 @@ namespace Collisions
             if (bb1.Intersects(bb2))
             {
 
-                mario.Pause();
-                chimes.Play();
+                //mario.Pause();
+                //chimes.Play();
                 Reset();
 
             }
@@ -315,4 +331,6 @@ namespace Collisions
             
         }
     }
+    
+
 }
