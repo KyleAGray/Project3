@@ -43,6 +43,8 @@ namespace Collisions
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferWidth = 1500;
         }
 
         /// <summary>
@@ -68,8 +70,9 @@ namespace Collisions
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            obstacle1 = Content.Load<Texture2D>("cactus");
-            obstacle1 = Content.Load<Texture2D>("Minion");
+            obstacle1 = Content.Load<Texture2D>("minion");
+            
+            //obstacle1 = Content.Load<Texture2D>("tree");
 
 
             soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
@@ -106,7 +109,7 @@ namespace Collisions
         protected override void Update(GameTime gameTime)
         {
             // Allow the game to exit
-
+            /*
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
@@ -118,6 +121,7 @@ namespace Collisions
             {
                 mario.Play();
             }
+            */
             base.Update(gameTime);
         }
 
@@ -196,7 +200,7 @@ namespace Collisions
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(texture1, spritePosition1, Color.White);
+            spriteBatch.Draw(obstacle1, obstaclepos1, Color.White);
             spriteBatch.End();
 
 

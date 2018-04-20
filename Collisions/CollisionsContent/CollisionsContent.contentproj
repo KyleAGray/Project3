@@ -42,11 +42,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cactus.png">
-      <Name>cactus</Name>
+    <Compile Include="Minion.png">
+      <Name>Minion</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="tree.png">
       <Name>tree</Name>
       <Importer>TextureImporter</Importer>
@@ -54,8 +56,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Minion.png">
-      <Name>Minion</Name>
+    <Compile Include="cactus.png">
+      <Name>cactus</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
