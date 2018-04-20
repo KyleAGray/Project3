@@ -15,11 +15,24 @@ namespace Collisions
     {
         Texture2D image;
         Vector2 Position;
+ 
         public Obstacle(Texture2D texture)
         {
             image = texture;
             Position.X = 1080;
             Position.Y = 500;
+        }
+        public Vector2 GetPos()
+        {
+            return Position;
+        }
+        public void UpdatePosition(Vector2 speed, float time)
+        {
+            Position += speed * time;
+        }
+        public Texture2D GetTexture()
+        {
+            return image;
         }
     }
 
@@ -31,18 +44,18 @@ namespace Collisions
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Texture2D tree;
+        //Texture2D tree;
         Texture2D minion;
         Texture2D background;
         Texture2D start;
 
         Vector2 minionPos;
-        Vector2 treepos;
+        //Vector2 treepos;
         Vector2 backgroundPos;
         Vector2 startPos;
 
         Vector2 minionSpeed = new Vector2(0.0f, 0.0f);
-        Vector2 treeSpeed = new Vector2(0, 0);
+        Vector2 objSpeed = new Vector2(0, 0);
         float spriteAngle1 = 0;
 
         int minionHeight;
@@ -55,6 +68,7 @@ namespace Collisions
         SoundEffectInstance chimes;
         SoundEffectInstance mario;
 
+        Random random = new Random();
         int minionStartPos_X, minionStartPos_Y;
 
         bool is_jumping;
@@ -62,6 +76,10 @@ namespace Collisions
 
         double timeAlive;
         double timeStart;
+
+        int cleared = 0;
+
+        List<Obstacle> obstacles = new List<Obstacle>();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -102,7 +120,6 @@ namespace Collisions
             minion = Content.Load<Texture2D>("minion");
             background = Content.Load<Texture2D>("road");
 
-            tree = Content.Load<Texture2D>("tree");
             start = Content.Load<Texture2D>("start");
 
 
@@ -121,8 +138,6 @@ namespace Collisions
             startPos.Y = 360;
             startPos.X = 540;
 
-            treepos.X = 1080;
-            treepos.Y = 500 - (tree.Height - minion.Height);
 
 
 
@@ -163,9 +178,10 @@ namespace Collisions
                 if(keystate.IsKeyDown(Keys.S))
                 {
                     active = true;
-                    treeSpeed = new Vector2(-300f, 0);
+                    objSpeed = new Vector2(-300f, 0);
                     timeStart = gameTime.ElapsedGameTime.TotalSeconds;
                     timeAlive = 0;
+                    obstacles.Add(CreateNew());
 
 
                 }
@@ -199,16 +215,77 @@ namespace Collisions
                 }
                 
             }
-            treepos += treeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //minionPos += minionSpeed * ;
+            UpdateObstaclePositions((float)gameTime.ElapsedGameTime.TotalSeconds);
             prevkeystate = keystate;
             CheckForCollision();
             CheckObstacle();
             base.Update(gameTime);
         }
 
+        private void UpdateObstaclePositions(float time)
+        {
+            foreach (Obstacle ob in obstacles)
+            {
+                ob.UpdatePosition(objSpeed, time);
+            }
+        }
         private void CheckObstacle()
         {
+            List<Obstacle> temp = new List<Obstacle>();
+            bool create_new = true;
+            foreach (Obstacle ob in obstacles)
+            {
+                if(ob.GetPos().X > 0)
+                {
+                    temp.Add(ob);
+                    if(ob.GetPos().X > 500)
+                    {
+                        create_new = false;
+                    }
+                }
 
+                else
+                {
+                    // Delete?
+                    cleared++;
+                }
+            }
+            if (create_new)
+            {
+                Obstacle newobstacle = CreateNew();
+                temp.Add(newobstacle);
+            }
+            
+            obstacles = temp;
+        }
+
+        private Obstacle CreateNew()
+        {
+            int r = random.Next(0, 3);
+
+            if (r==0)
+            {
+                return new Obstacle(Content.Load<Texture2D>("tree"));
+                ///obstacles.Add(obstacle);
+            }
+            else if(r==1)
+            {
+                return new Obstacle(Content.Load<Texture2D>("cactus"));
+                //obstacles.Add(obstacle);
+            }
+            else if (r == 2)
+            {
+                return new Obstacle(Content.Load<Texture2D>("barrel"));
+                //obstacles.Add(obstacle);
+            }
+            else
+            {
+                 return new Obstacle(Content.Load<Texture2D>("bomb"));
+                //obstacles.Add(obstacle);
+            }
+      
+            
         }
         private void do_jump(float speed)
         {
@@ -219,9 +296,9 @@ namespace Collisions
         }
         void UpdateSprite(GameTime gameTime, ref Vector2 spritePosition, ref Vector2 spriteSpeed)
         {
-
+            return;
             // Move the sprite by speed, scaled by elapsed time 
-
+            /*
             spritePosition += spriteSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             spriteAngle1 += 0.01f;
             int MaxX = graphics.GraphicsDevice.Viewport.Width - tree.Width;
@@ -258,25 +335,36 @@ namespace Collisions
                 spriteSpeed.Y *= -1;
                 spritePosition.Y = MinY;
             }
+            */
         }
 
         void CheckForCollision()
         {
-
             int offset = 30;
-            BoundingBox bb1 = new BoundingBox(new Vector3(treepos.X - (tree.Width / 2-offset), treepos.Y - (tree.Height / 2 - offset), 0), new Vector3(treepos.X + (tree.Width / 2 - offset), 
-                treepos.Y + (tree.Height / 2 - offset), 0));
+            BoundingBox bb2 = new BoundingBox(new Vector3(minionPos.X - (minionWidth / 2), minionPos.Y - (minionHeight / 2), 0),
+                new Vector3(minionPos.X + (minionWidth / 2), minionPos.Y + (minionHeight / 2), 0));
 
-            BoundingBox bb2 = new BoundingBox(new Vector3(minionPos.X - (minionWidth / 2), minionPos.Y - (minionHeight / 2), 0), new Vector3(minionPos.X + (minionWidth / 2), minionPos.Y + (minionHeight / 2), 0));
-
-            if (bb1.Intersects(bb2))
+            foreach ( Obstacle ob in obstacles)
             {
+                Vector2 obsPos = ob.GetPos();
+                Texture2D texture = ob.GetTexture();
+                
+                BoundingBox bb1 = new BoundingBox(new Vector3(obsPos.X - (texture.Width / 2 - offset), obsPos.Y - (texture.Height / 2 - offset), 0), new Vector3(obsPos.X + (texture.Width / 2 - offset),
+                obsPos.Y + (texture.Height / 2 - offset), 0));
 
-                //mario.Pause();
-                //chimes.Play();
-                Reset();
+                if (bb1.Intersects(bb2))
+                {
 
+                    //mario.Pause();
+                    //chimes.Play();
+                    Reset();
+
+                }
             }
+
+
+
+          
             
      
         }
@@ -296,9 +384,16 @@ namespace Collisions
             spriteBatch.Draw(background, backgroundPos, Color.White);
             spriteBatch.End();
 
-
+            foreach(Obstacle ob in obstacles)
+            {
+                Texture2D texture = ob.GetTexture();
+                Vector2 pos = ob.GetPos();
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+                spriteBatch.Draw(texture, pos, Color.White);
+                spriteBatch.Draw(minion, minionPos, Color.White);
+                spriteBatch.End();
+            }
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            spriteBatch.Draw(tree, treepos, Color.White);
             spriteBatch.Draw(minion, minionPos, Color.White);
             spriteBatch.End();
             
@@ -322,9 +417,8 @@ namespace Collisions
 
         private void Reset()
         {
-            treeSpeed = new Vector2(0, 0);
-            treepos.X = 1080;
-            treepos.Y = 500 - (tree.Height - minion.Height);
+            objSpeed = new Vector2(0, 0);
+            obstacles = new List<Obstacle>();
             active = false;
             minionPos.X = minionStartPos_X;
             minionPos.Y = minionStartPos_Y;
