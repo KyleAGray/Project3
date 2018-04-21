@@ -15,12 +15,14 @@ namespace Collisions
     {
         Texture2D image;
         Vector2 Position;
+        int pointVal;
  
-        public Obstacle(Texture2D texture)
+        public Obstacle(Texture2D texture,int point)
         {
             image = texture;
             Position.X = 1080;
             Position.Y = 500;
+            pointVal = point;
         }
         public Vector2 GetPos()
         {
@@ -34,6 +36,11 @@ namespace Collisions
         {
             return image;
         }
+        public int GetPointVal()
+        {
+            return pointVal;
+        }
+
     }
 
     /// <summary>
@@ -256,8 +263,8 @@ namespace Collisions
 
                 else
                 {
-                    // Delete?
-                    cleared++;
+                    
+                    cleared+= ob.GetPointVal();
                     objSpeed.X -= 10;
                 }
             }
@@ -276,22 +283,22 @@ namespace Collisions
 
             if (r==0)
             {
-                return new Obstacle(Content.Load<Texture2D>("tree"));
+                return new Obstacle(Content.Load<Texture2D>("tree"),1);
                 ///obstacles.Add(obstacle);
             }
             else if(r==1)
             {
-                return new Obstacle(Content.Load<Texture2D>("cactus"));
+                return new Obstacle(Content.Load<Texture2D>("cactus"),2);
                 //obstacles.Add(obstacle);
             }
             else if (r == 2)
             {
-                return new Obstacle(Content.Load<Texture2D>("barrel"));
+                return new Obstacle(Content.Load<Texture2D>("barrel"),3);
                 //obstacles.Add(obstacle);
             }
             else
             {
-                 return new Obstacle(Content.Load<Texture2D>("bomb"));
+                 return new Obstacle(Content.Load<Texture2D>("bomb"),4);
                 //obstacles.Add(obstacle);
             }
       
