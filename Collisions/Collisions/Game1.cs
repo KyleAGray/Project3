@@ -64,8 +64,10 @@ namespace Collisions
         KeyboardState prevkeystate;
         SoundEffect soundEffect;
         SoundEffect soundEffect2;
+        SoundEffect soundEffect3;
         SoundEffectInstance chimes;
         SoundEffectInstance mario;
+        SoundEffectInstance gameOverSound;
 
         Random random = new Random();
         int minionStartPos_X, minionStartPos_Y;
@@ -124,12 +126,17 @@ namespace Collisions
             start = Content.Load<Texture2D>("start");
 
 
-            //soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
-            //soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
-            //chimes = soundEffect.CreateInstance();
-            //mario = soundEffect2.CreateInstance();
-            //mario.IsLooped = true;
-            //mario.Play();
+            soundEffect = Content.Load<SoundEffect>("NFF-cowbell-big");
+            soundEffect2 = Content.Load<SoundEffect>("Super Mario Bros. medley");
+            //soundEffect3 = Content.Load<SoundEffect>("cartoon game over");
+            soundEffect3 = Content.Load<SoundEffect>("dying robot");
+            chimes = soundEffect.CreateInstance();
+            mario = soundEffect2.CreateInstance();
+            gameOverSound = soundEffect3.CreateInstance();
+            mario.IsLooped = true;
+            mario.Play();
+
+
 
             minionPos.X = 100;
             minionPos.Y = 500;
@@ -292,6 +299,8 @@ namespace Collisions
         }
         private void do_jump(float speed)
         {
+
+            chimes.Play();
             is_jumping = true;
 
             minionSpeed = new Vector2(0.0f, -speed);
@@ -358,8 +367,9 @@ namespace Collisions
                 if (bb1.Intersects(bb2))
                 {
 
-                    //mario.Pause();
-                    //chimes.Play();
+                    mario.Pause();
+                    //mario.
+                    gameOverSound.Play();
                     Reset();
                     gameOver = true;
 
@@ -445,7 +455,8 @@ namespace Collisions
             active = false;
             minionPos.X = minionStartPos_X;
             minionPos.Y = minionStartPos_Y;
-            
+            //gameOverSound.Pause();
+            mario.Play();
             
         }
     }
