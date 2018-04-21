@@ -199,6 +199,7 @@ namespace Collisions
                     obstacles.Add(CreateNew());
                     gameOver = false;
                     cleared = 0;
+                    mario.Play();
 
                 }
                 else
@@ -375,7 +376,6 @@ namespace Collisions
                 {
 
                     mario.Pause();
-                    //mario.
                     gameOverSound.Play();
                     Reset();
                     gameOver = true;
@@ -463,7 +463,7 @@ namespace Collisions
             minionPos.X = minionStartPos_X;
             minionPos.Y = minionStartPos_Y;
             //gameOverSound.Pause();
-            mario.Play();
+            //mario.Play();
             
         }
     }
